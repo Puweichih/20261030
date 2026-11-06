@@ -46,10 +46,6 @@ const authError = document.getElementById('authError');
 const googleSignInButton = document.getElementById('googleSignInButton');
 const signOutButton = document.getElementById('signOutButton');
 const needsSetup = Object.values(firebaseConfig).some(value => !value);
-let authInitialized = false;
-const authTimeout = setTimeout(() => {
-  if (!authInitialized) showAuthError('登入服務回應較慢。請重新整理頁面，或檢查瀏覽器是否封鎖 Firebase。');
-}, 12000);
 function showAuthError(message) { authError.textContent = message; }
 function friendlyAuthError(error) {
   const messages = {
@@ -90,14 +86,7 @@ if (needsSetup) {
     });
     signOutButton.addEventListener('click', async () => { try { await signOut(firebaseAuth); } catch (error) { showToast(friendlyAuthError(error)); } });
     getRedirectResult(firebaseAuth).catch(error => showAuthError(friendlyAuthError(error)));
-    onAuthStateChanged(firebaseAuth, user => {
-      authInitialized = true; clearTimeout(authTimeout);
-      appContent.hidden = !user; authGate.hidden = Boolean(user);
-      if (user) updateAccount(user); else googleSignInButton.disabled = false;
-    }, error => {
-      authInitialized = true; clearTimeout(authTimeout);
-      appContent.hidden = true; authGate.hidden = false; showAuthError(friendlyAuthError(error));
-    });
+    onAuthStateChanged(firebaseAuth, user => { appContent.hidden = !user; authGate.hidden = Boolean(user); if (user) updateAccount(user); else googleSignInButton.disabled = false; }, error => { appContent.hidden = true; authGate.hidden = false; showAuthError(friendlyAuthError(error)); });
   } catch (error) { showAuthError('Firebase 初始化失敗：' + friendlyAuthError(error)); googleSignInButton.disabled = true; }
 }
 
