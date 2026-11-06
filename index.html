@@ -28,10 +28,8 @@
 <div class="modal-backdrop" id="taskModal"><div class="modal"><div class="modal-head"><h2 id="taskModalTitle">新增待辦</h2><button class="close" onclick="closeModal()">×</button></div><p class="modal-desc">記下接下來要完成的事，稍後也可以再編輯。</p><form id="taskForm"><input type="hidden" name="id"><div class="modal-grid"><div class="field full"><label>任務名稱 *</label><input name="title" required placeholder="例如：完成統計學作業"></div><div class="field"><label>分類</label><select name="category"><option>課業</option><option>生活</option><option>社團</option></select></div><div class="field"><label>優先級</label><select name="priority"><option>一般</option><option>重要</option><option>急迫</option></select></div><div class="field"><label>到期日期</label><input name="date" type="date"></div><div class="field"><label>提醒時間</label><select name="remind"><option>提前 1 天</option><option selected>提前 2 小時</option><option>提前 30 分鐘</option></select></div><div class="field full"><label>備註</label><textarea name="note" rows="3" placeholder="補充細節或相關連結…"></textarea></div></div><div class="modal-actions"><button type="button" class="secondary" onclick="closeModal()">取消</button><button class="primary" type="submit" id="taskSubmit">建立待辦</button></div></form></div></div>
 <div class="modal-backdrop" id="courseModal"><div class="modal"><div class="modal-head"><h2 id="courseModalTitle">新增每週課程</h2><button class="close" onclick="closeCourseModal()">×</button></div><p class="modal-desc">建立每週固定課程，課程會出現在對應星期。</p><form id="courseForm"><input type="hidden" name="id"><div class="modal-grid"><div class="field full"><label>課程名稱 *</label><input name="name" required placeholder="例如：心理學概論"></div><div class="field"><label>星期</label><select name="day"><option value="1">星期一</option><option value="2">星期二</option><option value="3">星期三</option><option value="4">星期四</option><option value="5">星期五</option><option value="6">星期六</option><option value="0">星期日</option></select></div><div class="field"><label>上課時間</label><input name="time" type="time" value="10:00" required></div><div class="field"><label>下課時間</label><input name="end" type="time" value="12:00" required></div><div class="field"><label>教室</label><input name="room" placeholder="例如：教學大樓 302"></div><div class="field full"><label>授課老師</label><input name="teacher" placeholder="例如：王老師"></div><div class="field full"><label>課程顏色</label><div class="color-options"><label class="color-choice"><input type="radio" name="color" value="blue" checked><i style="--swatch:#e5f3fb;--swatch-accent:#4a9ccc"></i>天空藍</label><label class="color-choice"><input type="radio" name="color" value="mint"><i style="--swatch:#e6f4ee;--swatch-accent:#64a88e"></i>薄荷綠</label><label class="color-choice"><input type="radio" name="color" value="lav"><i style="--swatch:#f0edfb;--swatch-accent:#9b8ad3"></i>薰衣草</label><label class="color-choice"><input type="radio" name="color" value="peach"><i style="--swatch:#fff0e7;--swatch-accent:#e39a73"></i>蜜桃橘</label><label class="color-choice"><input type="radio" name="color" value="gold"><i style="--swatch:#fff5df;--swatch-accent:#d7ad58"></i>奶油黃</label></div></div></div><div class="modal-actions"><button type="button" class="secondary" onclick="closeCourseModal()">取消</button><button class="primary" type="submit" id="courseSubmit">新增課程</button></div></form></div></div>
 <script type="module">
-const firebaseSdkReady = Promise.all([
-  import('https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js'),
-  import('https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js')
-]).then(([appSdk, authSdk]) => ({...appSdk, ...authSdk}));
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 
 // 請在 Firebase Console 建立 Web App，將 firebaseConfig 填入；空值會安全地保持登入牆關閉。
 const firebaseConfig = {
@@ -76,9 +74,7 @@ if (needsSetup) {
   showAuthError('登入功能尚未完成 Firebase 設定，因此目前無法進入。');
   googleSignInButton.disabled = true; googleSignInButton.title = '尚未設定 Firebase';
 } else {
-  (async () => {
   try {
-    const { initializeApp, getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } = await firebaseSdkReady;
     const firebaseApp = initializeApp(firebaseConfig);
     const firebaseAuth = getAuth(firebaseApp);
     const googleProvider = new GoogleAuthProvider();
@@ -103,7 +99,6 @@ if (needsSetup) {
       appContent.hidden = true; authGate.hidden = false; showAuthError(friendlyAuthError(error));
     });
   } catch (error) { showAuthError('Firebase 初始化失敗：' + friendlyAuthError(error)); googleSignInButton.disabled = true; }
-  })();
 }
 
 const DAYS=['日','一','二','三','四','五','六'];
