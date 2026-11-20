@@ -124,6 +124,8 @@ function showToast(msg){const t=document.getElementById('toast');t.textContent=m
 function esc(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 document.querySelectorAll('.modal-backdrop').forEach(b=>b.addEventListener('click',e=>{if(e.target===b)b.classList.remove('show')}));document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeCourseModal()}});
 setWeekLabels();renderWeek('weekGrid');renderWeek('weekGrid2');renderTasks();
+// Inline HTML handlers run in the global scope, while this module's functions do not.
+Object.assign(window,{changeWeek,closeCourseModal,closeModal,deleteCourse,deleteTask,goPage,openCourseModal,openModal,openTaskModal,renderTasks,resetPreferences,savePreferences,showToast,toggleTask});
 </script></body></html>
 
 
