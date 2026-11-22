@@ -2,7 +2,7 @@
 
 GitHub Pages 網站：<https://puweichih.github.io/20261030/>
 
-網站使用 Firebase Authentication 登入、Cloud Firestore 儲存資料，並透過 Firebase AI Logic 提供拾光 AI 助手。AI 助手只會將待辦名稱、分類、日期、課表與目前訊息送給 Gemini 作為回答脈絡；對話不會寫入 Firestore。
+拾光是一款個人課表與待辦管理網站，提供 Google 登入與 AI 助手。
 
 ## 本機預覽
 
